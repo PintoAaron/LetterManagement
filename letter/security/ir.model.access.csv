@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+letter_user_access,letter_user_access,model_letter_letter,base.group_user,1,1,1,1
+letter_type_user_access,letter_type_user_access,model_letter_type,base.group_user,1,1,1,1
+letter_type_stage_user_access,letter_type_stage_user_access,model_letter_type_stage,base.group_user,1,1,1,1

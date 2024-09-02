@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="letter_kanban" model="ir.ui.view">
+        <field name="name">letter.kanban</field>
+        <field name="model">letter.letter</field>
+        <field name="arch" type="xml">
+            <kanban
+                class="o_kanban_dashboard o_letter_kanban o_emphasize_colors"
+                sample="1"
+                quick_create="0"
+                default_order="sequence, name, id"
+            >
+                <field name="stage_id" />
+                <field name="display_name" />
+                <field name="name" />
+                <field name="subject" />
+                <field name="company_id" />
+                <field name="color" />
+                <field name="user_id" />
+                <field name="sequence" widget="handle" />
+                <templates>
+                    <t t-name="kanban-menu" groups="base.group_user">
+                        <div class="container">
+                            <div class="o_kanban_card_manage_settings row">
+                                <div role="menuitem" aria-haspopup="true" class="col-6">
+                                    <ul
+                                        class="oe_kanban_colorpicker"
+                                        data-field="color"
+                                        role="popup"
+                                    />
+                                </div>
+                                <div role="menuitem" class="col-6">
+                                    <a
+                                        class="dropdown-item"
+                                        role="menuitem"
+                                        type="edit"
+                                    >Manage</a>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                    <t t-name="kanban-box">
+                        <div
+                            t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click o_has_icon oe_kanban_content oe_kanban_card"
+                        >
+                            <div class="o_project_kanban_main ">
+                                <div class="o_kanban_card_content mw-100">
+                                    <div class="o_kanban_primary_left">
+                                        <div class="o_primary">
+                                            <span
+                                                class="o_text_overflow"
+                                                t-att-title="record.display_name.value"
+                                            >
+                                                <t t-esc="record.display_name.value" />
+                                            </span>
+                                            <span
+                                                class="o_text_overflow"
+                                                t-att-title="record.subject.value"
+                                            >
+                                                <t t-esc="record.subject.value" />
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_bottom mt-3">
+                                <div class="oe_kanban_bottom_left">
+                                    <field
+                                        name="activity_ids"
+                                        widget="kanban_activity"
+                                    />
+                                </div>
+                                <div class="oe_kanban_bottom_right">
+                                    <field
+                                        name="user_id"
+                                        widget="many2one_avatar_user"
+                                        t-if="record.user_id.raw_value"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="letter_tree" model="ir.ui.view">
+        <field name="name">letter.tree</field>
+        <field name="model">letter.letter</field>
+        <field name="arch" type="xml">
+            <tree create="0">
+                <field name="sequence" widget="handle" />
+                <field name="name" optional="show" />
+                <field name="subject" optional="show" />
+                <field name="user_id" widget="many2one_avatar_user" optional="show" />
+                <field name="letter_type_id" />
+                <field name="activity_ids" widget="list_activity" optional="show" />
+                <field
+                    name="date_last_stage_update"
+                    widget="remaining_days"
+                    optional="show"
+                />
+                <field name="stage_id" options="{'no_open': True}" />
+                <field name="active" column_invisible="1" />
+                <field name="is_closed" column_invisible="1" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="letter_form" model="ir.ui.view">
+        <field name="name">letter.form</field>
+        <field name="model">letter.letter</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="active" invisible="1" />
+                <field name="is_closed" invisible="1" />
+                <header>
+                    <widget
+                        name="attach_document"
+                        string="Attach Document"
+                        action="message_post"
+                        invisible="attachment_number &lt; 1"
+                    />
+                    <widget
+                        name="attach_document"
+                        string="Attach Document"
+                        action="message_post"
+                        highlight="1"
+                        invisible="attachment_number &gt;= 1"
+                    />
+                    <field
+                        name="stage_id"
+                        widget="statusbar_duration"
+                        invisible="not letter_type_id"
+                        options="{'clickable': '1', 'fold_field': 'fold'}"
+                    />
+<!--                    <button-->
+<!--                        name="action_preview_letter"-->
+<!--                        type="object"-->
+<!--                        string="Preview"-->
+<!--                        class="oe_highlight"-->
+<!--                        invisible="not id"-->
+<!--                    />-->
+<!--                    <button-->
+<!--                        name="action_download_letter"-->
+<!--                        type="object"-->
+<!--                        string="Download"-->
+<!--                        class="oe_highlight"-->
+<!--                        invisible="not is_closed"-->
+<!--                    />-->
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button
+                            name="action_open_attachments"
+                            class="oe_stat_button"
+                            icon="fa-book"
+                            type="object"
+                            invisible="attachment_number == 0"
+                        >
+                            <field
+                                name="attachment_number"
+                                widget="statinfo"
+                                string="Documents"
+                                options="{'reload_on_button': true}"
+                            />
+                        </button>
+                    </div>
+                    <widget
+                        bg_color="bg-danger"
+                        invisible="active == True"
+                        name="web_ribbon"
+                        title="Archived"
+                    />
+                    <div class="oe_avatar">
+                        <field
+                            name="letter_type_image"
+                            widget="image"
+                            options="{'preview_image': 'letter_type_image', 'size': [80, 80]}"
+                            class="bg-view"
+                        />
+                    </div>
+                    <div class="oe_title">
+                        <h4>
+                            <field invisible="name == '/'" name="name" />
+                        </h4>
+                        <h1>
+                            <field name="subject" class="mb-5" required="1" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group name="main">
+                            <field
+                                name="user_id"
+                                options="{'no_create': True, 'no_open': True}"
+                                domain="[('share', '=', False)]"
+                                widget="many2one_avatar_user"
+                            />
+                            <field name="letter_type_id" invisible="1" />
+                            <field name="date" />
+                            <field
+                                name="partner_ids"
+                                options="{'no_create': True}"
+                                widget="many2many_tags_avatar"
+
+                            />
+                            <field name="available_mail_template_ids" invisible="1" />
+                            <field
+                                name="template_id"
+                                options="{'no_create': True, 'no_open': True}"
+                                context="{'default_letter_id': active_id}"
+                            />
+                            <field name="company_id" invisible="1" />
+                            <field name="render_model" invisible="1" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="content" string="Content">
+                            <field name="body" readonly="is_closed" />
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="o_attachment_preview" />
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" />
+                    <field name="activity_ids" />
+                    <field name="message_ids" />
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="letter_search" model="ir.ui.view">
+        <field name="name">letter.search</field>
+        <field name="model">letter.letter</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+                <field name="subject" />
+                <field name="stage_id" />
+                <filter
+                    string="Archived"
+                    name="inactive"
+                    domain="[('active', '=', False)]"
+                />
+                <group expand="1" string="Group By">
+                    <filter
+                        name="groupby_company"
+                        string="Company"
+                        context="{'group_by': 'company_id'}"
+                    />
+                    <filter
+                        string="Stage"
+                        name="groupby_stage"
+                        context="{'group_by': 'stage_id'}"
+                    />
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>

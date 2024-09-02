@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <menuitem
+        id="root_menu"
+        name="Letters"
+        web_icon="letter,static/description/icon.png"
+    >
+        <menuitem id="letters_menu" name="Letters" sequence="1" />
+        <menuitem id="config_menu" name="Configuration" sequence="99" />
+    </menuitem>
+</odoo>

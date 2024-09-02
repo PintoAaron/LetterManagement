@@ -1,0 +1,144 @@
+<div>
+  <style>.univers-lt-std {
+     font-family: 'Univers LT Std 57 Condensed', sans-serif;
+     font-weight: normal;
+     font-size: 12px;
+     color: blue !important;
+     }</style>
+  <t t-set="company" t-value="env.company"/>
+  <t t-set="recipient" t-value="object.partner_ids[0].name if object.partner_ids else ''"/>
+
+  <div class="header univers-lt-std">
+    <div class="row">
+      <div class="col-6" style="width: 50%;">
+        <t t-if="company.logo_web">
+          <img alt="Logo" style="max-height: 70px; margin-top: 20px;" t-att-src="image_data_uri(company.logo_web)"/>
+        </t>
+      </div>
+      <div name="company_address" style="position: absolute; right: 0; top: 20px; text-align: right;">
+        <strong>
+          <t t-if="company.parent_id.name">
+            <span t-field="company.parent_id.name"/>
+            <br/>
+          </t>
+        </strong>
+        <t t-if="company.name">
+          <span t-field="company.name"/>
+          <br/>
+        </t>
+        <t t-if="company.street">
+          <span t-field="company.street"/>
+          <br/>
+        </t>
+        <t t-if="company.street2">
+          <span t-field="company.street2"/>
+          <br/>
+        </t>
+        <t t-if="company.phone">
+          Tel:
+          <span t-field="company.phone"/>
+          <br/>
+        </t>
+        <t t-if="object.date">
+          Date:
+          <span t-field="object.date"/>
+          <br/>
+        </t>
+      </div>
+    </div>
+  </div>
+
+  <div class="page univers-lt-std mt-5 avoid-page-break-inside">
+    <p>
+      <strong>Offer Letter</strong>
+      :
+      <t t-out="recipient"/>
+    </p>
+    <t t-set="date" t-value="object.date.strftime('%A, %d %B %Y %I:%M %p') if object.date else ''"/>
+    <p>
+      <t t-out="date">day, month dd, yyyy - hh:mm:ss (GMT)</t>
+    </p>
+    <br/>
+    <p>
+      Dear
+      <t t-out="recipient"/>
+      ,
+    </p>
+    <p>
+      On behalf of
+      <t t-out="company.name"/>
+      , I am pleased to welcome you onto the
+      <t t-out="company.name"/>
+      team as Software Engineer reporting to John Doe, our head of IT Applications. You are joining a company who prides itself on serving a meaningful mission. A mission which will help spur job creation, empower talented people to change some part of the world through their entrepreneurial vision, and help provide investors access to some of the most promising startup investment deals.
+    </p>
+    <p>
+      In pursuing our mission, we learn from, as well as, teach each other; we leverage what others have done as well as demonstrate leadership in thought and action; we have the deepest respect of one another's talents and shortcomings; we work as hard as we can, in the spirit of the startup culture; we take a long term view of our goals; and we have fun. We look forward to your relationship with
+      <t t-out="company.name"/>
+      , one in which you can grow, and take full advantage of the opportunities
+      <t t-out="company.name"/>
+      offers.
+    </p>
+    <p>Your monthly salary will be $5600 and you will receive $1500 stock options. </p>
+    <p>
+      <strong>Start Date of Full-Time employment</strong>
+      : Your starting date will be
+      <strong>September 01, 2024</strong>
+      .
+    </p>
+    <p>
+      We believe that each employee's contribution to
+      <t t-out="company.name"/>
+      is valuable. Much of what you learn and create at
+      <t t-out="company.name"/>
+      will be considered confidential and proprietary.
+    </p>
+    <p>
+      While we are sure you share our enthusiasm about your joining us, we also respect your rights and
+      <t t-out="company.name"/>
+      rights to make decisions that ensure our mutual best interests. Therefore, please recognize that your employment with
+      <t t-out="company.name"/>
+      is for an unspecified duration and is at-will. This means that
+      <t t-out="company.name"/>
+      has the right to end your employment at any time, with or without cause and with or without notice. You will provide
+      <t t-out="company.name"/>
+      with notice not less than fifteen (15) business days prior to your termination of employment.
+    </p>
+    <p>
+      We are excited about having you join
+      <t t-out="company.name"/>
+      . This letter and any attachments constitute the entire employment agreement and understanding between you and
+      <t t-out="company.name"/>
+      , and supersede all prior verbal discussions between us. Please acknowledge your acceptance of this offer by signing and returning the enclosed copy of this offer letter and the Employee Proprietary Information and Inventions Agreement to
+      <t t-out="recipient"/>
+      . I look forward to building a great company together.
+    </p>
+    <p>
+      <t t-out="company.name"/>
+      <br/>
+      <t t-out="object.user_id.name"/>
+    </p>
+    <br/>
+    <p>
+      _____________________________
+      <br/>
+      Signature/Date
+    </p>
+    <p>Acceptance:</p>
+    <p>
+      I accept the terms of my employment with
+      <t t-out="company.name"/>
+      as an Software Engineer as set forth herein. I understand that this offer letter does not constitute a contract of employment for any specified period of time, and that my employment relationship may be terminated by either party.
+    </p>
+    <p>
+      _____________________________
+      <br/>
+      Signature/Date
+    </p>
+    <p>
+      _____________________________
+      <br/>
+      <t t-out="recipient"/>
+    </p>
+  </div>
+
+</div>

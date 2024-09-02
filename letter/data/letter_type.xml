@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="business" model="letter.type">
+        <field name="name">Business</field>
+        <field name="image" type="base64" file="letter/static/src/img/Letter.png" />
+        <field name="sequence">1</field>
+        <field name="description">create business letters</field>
+    </record>
+
+    <record id="employment" model="letter.type">
+        <field name="name">Employment</field>
+        <field name="image" type="base64" file="letter/static/src/img/Letter.png" />
+        <field name="sequence">2</field>
+        <field name="description">create employment letters</field>
+    </record>
+
+    <record id="recruitment" model="letter.type">
+        <field name="name">Recruitment</field>
+        <field name="image" type="base64" file="letter/static/src/img/Letter.png" />
+        <field name="sequence">3</field>
+        <field name="description">create recruitment letters</field>
+    </record>
+
+    <record id="termination" model="letter.type">
+        <field name="name">Termination</field>
+        <field name="image" type="base64" file="letter/static/src/img/Letter.png" />
+        <field name="sequence">4</field>
+        <field name="description">create termination letters</field>
+    </record>
+
+    <record id="request" model="letter.type">
+        <field name="name">Request</field>
+        <field name="image" type="base64" file="letter/static/src/img/Letter.png" />
+        <field name="sequence">5</field>
+        <field name="description">create request letters</field>
+    </record>
+
+    <record id="offer" model="letter.type">
+        <field name="name">Offer</field>
+        <field name="image" type="base64" file="letter/static/src/img/Letter.png" />
+        <field name="sequence">6</field>
+        <field name="description">create offer letters</field>
+    </record>
+</odoo>

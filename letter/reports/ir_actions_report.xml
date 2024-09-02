@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template id="letter_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <div
+                    class="article"
+                    t-att-data-oe-id="o and o.id"
+                    t-att-data-oe-lang="o and o.env.context.get('lang')"
+                    t-att-data-oe-model="o and o._name"
+                >
+                    <t t-out="o.body" />
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <record id="letter_report" model="ir.actions.report">
+        <field name="name">Letter</field>
+        <field name="model">letter.letter</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">letter.letter_template</field>
+        <field name="report_file">letter.letter_template</field>
+        <field name="paperformat_id" ref="base.paperformat_euro" />
+        <field name="print_report_name">object.name.replace('/', '')</field>
+        <field name="binding_model_id" ref="model_letter_letter" />
+        <field name="binding_type">report</field>
+    </record>
+</odoo>
