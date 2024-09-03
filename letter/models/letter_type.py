@@ -42,6 +42,14 @@ class LetterType(models.Model):
         string="Default Template",
 
     )
+    partner_ids = fields.Many2many(
+        comodel_name='res.partner',
+        domain=[('is_company', '=', False)],
+        relation="letter_type_partner_rel",
+        column1="letter_type_id",
+        column2="partner_id",
+        string='Signatories')
+    
     mail_template_ids = fields.Many2many(
         comodel_name="mail.template",
         domain=[("model", "=", "letter.letter")],

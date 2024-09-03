@@ -1,5 +1,5 @@
 import random
-
+from datetime import datetime
 from odoo import api, fields, models, tools
 from odoo.tools import is_html_empty
 
@@ -26,11 +26,9 @@ class Letter(models.Model):
         letter_type = self.env.context.get("letter_type_id", False)
         if letter_type:
             letter_type = self.env["letter.type"].browse(letter_type)
-            print('hello')
             return letter_type.mail_template_id.id
 
         else:
-            print('hi')
             return False
 
     template_id = fields.Many2one(
@@ -117,13 +115,12 @@ class Letter(models.Model):
         index=True,
         default=lambda self: self.env.company,
     )
-
     attachment_number = fields.Integer(
         "Number of Attachments", compute="_compute_attachment_number"
     )
     is_closed = fields.Boolean(compute="_compute_is_closed")
-
-
+    
+    
 
     @api.depends("subject")
     def _compute_render_model(self):
@@ -162,6 +159,17 @@ class Letter(models.Model):
     def _compute_is_closed(self):
         for record in self:
             record.is_closed = record.stage_id.is_closing
+    
+    
+    
+    def _create_unique_reference(self, date=None):
+        company = self.env.company
+        date =  datetime.strptime(date, "%Y-%m-%d").date() or fields.Date.today()
+        letter_count = self.env['letter.letter'].search_count(
+            [('company_id', '=', company.id)])
+        company_initials = "".join([word[0] for word in company.name.split()])
+        formatted_date = date.strftime("%d%b%Y").upper()
+        return f"{company_initials}/{formatted_date}/{letter_count+1:03d}"
 
     # @api.onchange("partner_ids")
     # def _onchange_set_value_from_template(self):
@@ -208,7 +216,6 @@ class Letter(models.Model):
                 )
                 body_html = tools.ustr(body)
                 self.body = body_html
-                print(self.body)
 
 
     def _set_value_from_template(self, template_fname, composer_fname=False):
@@ -247,6 +254,13 @@ class Letter(models.Model):
             self.template_id = self.letter_type_id.mail_template_id.id
         else:
             self.template_id = False
+            
+    @api.model_create_multi
+    def create(self, values_list):
+        for value in values_list:
+            date = value.get('date', None)
+            value["name"] = self._create_unique_reference(date)
+        return super().create(values_list)
 
 
 
