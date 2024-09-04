@@ -120,11 +120,6 @@ class Letter(models.Model):
         "Number of Attachments", compute="_compute_attachment_number"
     )
     is_closed = fields.Boolean(compute="_compute_is_closed")
-<<<<<<< HEAD
-    
-    
-=======
->>>>>>> feature/modification
 
     @api.depends("subject")
     def _compute_render_model(self):
@@ -220,10 +215,6 @@ class Letter(models.Model):
                 )
                 body_html = tools.ustr(body)
                 self.body = body_html
-<<<<<<< HEAD
-
-=======
->>>>>>> feature/modification
 
     def _set_value_from_template(self, template_fname, composer_fname=False):
         """Set composer value from its template counterpart."""
