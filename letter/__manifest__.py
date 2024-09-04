@@ -1,6 +1,6 @@
 {
     "name": "Letters",
-    "summary": "Manage letters",
+    "summary": "Manage letter",
     "author": "QG Apps",
     "website": "https://github.com/space-bicycle/odoo-lab",
     "version": "17.0.1.0.2",

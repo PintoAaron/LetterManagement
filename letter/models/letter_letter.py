@@ -1,5 +1,6 @@
 import random
 from datetime import datetime
+import base64
 from odoo import api, fields, models, tools
 from odoo.tools import is_html_empty
 
@@ -119,8 +120,11 @@ class Letter(models.Model):
         "Number of Attachments", compute="_compute_attachment_number"
     )
     is_closed = fields.Boolean(compute="_compute_is_closed")
+<<<<<<< HEAD
     
     
+=======
+>>>>>>> feature/modification
 
     @api.depends("subject")
     def _compute_render_model(self):
@@ -216,7 +220,10 @@ class Letter(models.Model):
                 )
                 body_html = tools.ustr(body)
                 self.body = body_html
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/modification
 
     def _set_value_from_template(self, template_fname, composer_fname=False):
         """Set composer value from its template counterpart."""
@@ -247,8 +254,7 @@ class Letter(models.Model):
             )[rendering_res_ids[0]][template_fname]
         return self[composer_fname]
 
-
-#     set the default mail template for each letter when we try to create the letter
+    #     set the default mail template for each letter when we try to create the letter
     def _set_default_template(self):
         if self.letter_type_id:
             self.template_id = self.letter_type_id.mail_template_id.id
@@ -262,5 +268,26 @@ class Letter(models.Model):
             value["name"] = self._create_unique_reference(date)
         return super().create(values_list)
 
+    def render_pdf(self):
+        report_ref = 'letter.letter_report'
+        pdf_content, _ = self.env['ir.actions.report']._render_qweb_pdf(report_ref, self.id)
 
+        # Save PDF as attachment
+        attachment = self.env['ir.attachment'].create({
+            'name': f'{self.name}.pdf',
+            'type': 'binary',
+            'datas': base64.b64encode(pdf_content),
+            'res_model': self._name,
+            'res_id': self.id,
+            'mimetype': 'application/pdf',
+        })
+        return attachment
 
+    def action_download_pdf(self):
+        self.ensure_one()
+        attachment = self.render_pdf()
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/web/content/{attachment.id}?download=true',
+            'target': 'self',
+        }
