@@ -290,6 +290,7 @@ class Letter(models.Model):
 
     def action_open_signature_kanban(self):
         # Redirect the user to the kanban view of the signature templates
+        
         return {
             'type': 'ir.actions.act_window',
             'name': 'Signature Templates',
@@ -301,7 +302,7 @@ class Letter(models.Model):
 
         }
 
-    # def request_sign_template(self):
+    # # def request_sign_template(self):
     #     self.ensure_one()
     #
     #     # Step 1: Generate the PDF using your existing logic or Odoo's template system
@@ -360,13 +361,7 @@ class Letter(models.Model):
 
     def action_open_letter_requests(self):
         self.ensure_one()
-        return {
-            'type': 'ir.actions.act_window',
-            'name': 'Signed Documents',
-            'res_model': 'sign.request',
-            'view_mode': 'kanban,tree,form',
-            'domain': [('id', '=', self.sign_request_id.id)],
-            'target': 'current',
-        }
+        
+        return self.sign_template_id.open_requests()
 
 
