@@ -120,6 +120,7 @@ class Letter(models.Model):
         "Number of Attachments", compute="_compute_attachment_number"
     )
     is_closed = fields.Boolean(compute="_compute_is_closed")
+    is_sign = fields.Boolean(compute="_compute_is_sign")
     sign_request_id = fields.Many2one('sign.request', string="Signature Request", readonly=True)
     sign_template_id = fields.Many2one('sign.template', string="Signature Template", readonly=True)
 
@@ -160,6 +161,10 @@ class Letter(models.Model):
     def _compute_is_closed(self):
         for record in self:
             record.is_closed = record.stage_id.is_closing
+
+    def _compute_is_sign(self):
+        for record in self:
+            record.is_sign = True if record.stage_id.name == "Approve and Sign" else False
 
     def _create_unique_reference(self, date=None):
         company = self.env.company
@@ -349,7 +354,7 @@ class Letter(models.Model):
             'type': 'binary',
         })
         sign_template = self.env['sign.template'].create({
-            'name': '%s Sign Template' % self.name,
+            'name': f"{self.name} - {self.subject}",
             'attachment_id': attachment.id,
         })
         self.sign_template_id = sign_template.id

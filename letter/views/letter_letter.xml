@@ -118,6 +118,7 @@
                 <field name="stage_id" options="{'no_open': True}" />
                 <field name="active" column_invisible="1" />
                 <field name="is_closed" column_invisible="1" />
+                <field name="is_sign" column_invisible="1"/>
             </tree>
         </field>
     </record>
@@ -129,6 +130,8 @@
             <form>
                 <field name="active" invisible="1" />
                 <field name="is_closed" invisible="1" />
+                <field name="sign_template_id" invisible="1" />
+                <field name="is_sign" invisible="1" />
                 <header>
                     <widget
                         name="attach_document"
@@ -165,12 +168,16 @@
                     />
                     <button
                             name="action_open_signature_kanban"
-                            type="object" string="Manage Signature"
-                            class="btn-primary"/>
+                            type="object" string="View Sign Templates"
+                            class="btn-primary"
+                            invisible="not is_sign or not sign_template_id"
+                            />
                     <button
                             name="action_create_sign_template"
-                            type="object" string="Create Sign Template"
-                            class="btn-primary"/>
+                            type="object" string="Sign letter"
+                            class="btn-primary"
+                            invisible="not is_sign or sign_template_id"
+                            />
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">

@@ -67,7 +67,7 @@
         sequence="10"
     />
      <menuitem id="menu_signature_template"
-              name="Signature Templates"
+              name="Signed Letters"
               parent="letters_menu"
               action="action_signature_kanban_view"
               sequence="10"/>
