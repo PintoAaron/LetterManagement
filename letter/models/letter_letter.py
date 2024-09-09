@@ -362,6 +362,13 @@ class Letter(models.Model):
     def action_open_letter_requests(self):
         self.ensure_one()
         
-        return self.sign_template_id.open_requests()
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Sign Requests",
+            "res_model": "sign.request",
+            "res_id": self.id,
+            "domain": [["template_id", "in", self.sign_template_id.ids]],
+            "views": [[False, 'kanban'], [False, "form"]]
+        }
 
 
