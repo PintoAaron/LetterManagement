@@ -299,8 +299,6 @@ class Letter(models.Model):
             'target': 'current',
             "domain": [('letter_ids', '!=', False)],
 
-
-
         }
 
     # def request_sign_template(self):
@@ -360,7 +358,15 @@ class Letter(models.Model):
         self.sign_template_id = sign_template.id
         return sign_template.go_to_custom_template()
 
-
-
+    def action_open_letter_requests(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Signed Documents',
+            'res_model': 'sign.request',
+            'view_mode': 'kanban,tree,form',
+            'domain': [('id', '=', self.sign_request_id.id)],
+            'target': 'current',
+        }
 
 

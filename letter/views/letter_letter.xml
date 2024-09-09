@@ -167,7 +167,7 @@
                         invisible="not is_closed"
                     />
                     <button
-                            name="action_open_signature_kanban"
+                            name="action_open_letter_requests"
                             type="object" string="View Sign Templates"
                             class="btn-primary"
                             invisible="not is_sign or not sign_template_id"
