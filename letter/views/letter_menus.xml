@@ -7,5 +7,6 @@
     >
         <menuitem id="letters_menu" name="Letters" sequence="1" />
         <menuitem id="config_menu" name="Configuration" sequence="99" />
+        <menuitem id="sign_menu" name="Sign" sequence="100"/>
     </menuitem>
 </odoo>

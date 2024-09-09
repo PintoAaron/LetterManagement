@@ -85,6 +85,20 @@
         </field>
     </record>
 
+    <odoo>
+    <record id="action_signature_kanban_view" model="ir.actions.act_window">
+        <field name="name">Signature Templates</field>
+        <field name="res_model">sign.template</field>
+        <field name="view_mode">kanban</field>
+        <field name="view_id" ref="sign.sign_template_view_kanban"/>
+        <field name="target">current</field>
+        <field name="domain">[('letter_ids', '!=', False)]</field>
+    </record>
+</odoo>
+
+
+
+
     <record id="letter_tree" model="ir.ui.view">
         <field name="name">letter.tree</field>
         <field name="model">letter.letter</field>
@@ -149,6 +163,14 @@
                         class="oe_highlight"
                         invisible="not is_closed"
                     />
+                    <button
+                            name="action_open_signature_kanban"
+                            type="object" string="Manage Signature"
+                            class="btn-primary"/>
+                    <button
+                            name="action_create_sign_template"
+                            type="object" string="Create Sign Template"
+                            class="btn-primary"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">

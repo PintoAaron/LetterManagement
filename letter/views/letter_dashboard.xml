@@ -66,6 +66,13 @@
         parent="letters_menu"
         sequence="10"
     />
+     <menuitem id="menu_signature_template"
+              name="Signature Templates"
+              parent="letters_menu"
+              action="action_signature_kanban_view"
+              sequence="10"/>
+
+
 
     <!-- Dashboad kanban -->
     <record id="letter_type_kanban" model="ir.ui.view">

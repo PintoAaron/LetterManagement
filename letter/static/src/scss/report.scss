@@ -13,3 +13,19 @@
     text-align: justify;
     text-justify: inter-word;
 }
+
+.approvals {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.300em;
+            width:100%
+
+        }
+
+.approval {
+            text-align: left;
+            flex: 1;
+            margin-right: 3.125em;
+        }
+
+

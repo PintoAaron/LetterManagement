@@ -120,6 +120,8 @@ class Letter(models.Model):
         "Number of Attachments", compute="_compute_attachment_number"
     )
     is_closed = fields.Boolean(compute="_compute_is_closed")
+    sign_request_id = fields.Many2one('sign.request', string="Signature Request", readonly=True)
+    sign_template_id = fields.Many2one('sign.template', string="Signature Template", readonly=True)
 
     @api.depends("subject")
     def _compute_render_model(self):
@@ -158,17 +160,15 @@ class Letter(models.Model):
     def _compute_is_closed(self):
         for record in self:
             record.is_closed = record.stage_id.is_closing
-    
-    
-    
+
     def _create_unique_reference(self, date=None):
         company = self.env.company
-        date =  datetime.strptime(date, "%Y-%m-%d").date() or fields.Date.today()
+        date = datetime.strptime(date, "%Y-%m-%d").date() or fields.Date.today()
         letter_count = self.env['letter.letter'].search_count(
             [('company_id', '=', company.id)])
         company_initials = "".join([word[0] for word in company.name.split()])
         formatted_date = date.strftime("%d%b%Y").upper()
-        return f"{company_initials}/{formatted_date}/{letter_count+1:03d}"
+        return f"{company_initials}/{formatted_date}/{letter_count + 1:03d}"
 
     # @api.onchange("partner_ids")
     # def _onchange_set_value_from_template(self):
@@ -251,7 +251,7 @@ class Letter(models.Model):
             self.template_id = self.letter_type_id.mail_template_id.id
         else:
             self.template_id = False
-            
+
     @api.model_create_multi
     def create(self, values_list):
         for value in values_list:
@@ -282,3 +282,80 @@ class Letter(models.Model):
             'url': f'/web/content/{attachment.id}?download=true',
             'target': 'self',
         }
+
+    def action_open_signature_kanban(self):
+        # Redirect the user to the kanban view of the signature templates
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Signature Templates',
+            'res_model': 'sign.template',
+            'view_mode': 'kanban',
+            'view_id': self.env.ref('sign.sign_template_view_kanban').id,
+            'target': 'current',
+            "domain": [('letter_ids', '!=', False)],
+
+
+
+        }
+
+    # def request_sign_template(self):
+    #     self.ensure_one()
+    #
+    #     # Step 1: Generate the PDF using your existing logic or Odoo's template system
+    #     # pdf_content, _ = self.env.ref('your_module_name.letter_pdf_template').render_qweb_pdf([self.id])
+    #     report_ref = 'letter.letter_report'
+    #     pdf_content, _ = self.env['ir.actions.report']._render_qweb_pdf(report_ref, self.id)
+    #
+    #     # Step 2: Create a sign request for the letter PDF
+    #     SignRequest = self.env['sign.request']
+    #
+    #     sign_request = SignRequest.create({
+    #         'template_id': 10,  # A predefined sign template
+    #         'reference':  self.name,
+    #         'request_item_ids': [(5, 0, 0), (0, 0, {
+    #             'role_id': self.env.ref('sign.sign_item_role_customer').id,
+    #             'partner_id': self.env.ref('base.partner_demo_portal').id,
+    #         })],
+    #         'attachment_ids': [(0, 0, {
+    #             'name': '%s.pdf' % self.name,
+    #             'datas': base64.b64encode(pdf_content),  # Attach the generated PDF
+    #             'type': 'binary',
+    #         })],
+    #     })
+    #
+    #     # Step 3: Store the sign request on the letter record
+    #     print(sign_request)
+    #     print(sign_request.id)
+    #     sign_request_instance = self.env['sign.request'].browse(sign_request.id)
+    #     print(sign_request_instance)
+    #     self.sign_request_id = sign_request.id
+    #
+    #     # Step 4: Redirect the user to the signing interface
+    #     return {
+    #         'type': 'ir.actions.act_url',
+    #         'url': '/sign/document/%s' % sign_request.id,
+    #         'target': 'self',
+    #     }
+
+    def action_create_sign_template(self):
+        self.ensure_one()
+
+        report_ref = 'letter.letter_report'
+        pdf_content, _ = self.env['ir.actions.report']._render_qweb_pdf(report_ref, self.id)
+        attachment = self.env['ir.attachment'].create({
+            'name': self.name,
+            'datas': base64.b64encode(pdf_content),
+            'res_model': 'sign.template',
+            'type': 'binary',
+        })
+        sign_template = self.env['sign.template'].create({
+            'name': '%s Sign Template' % self.name,
+            'attachment_id': attachment.id,
+        })
+        self.sign_template_id = sign_template.id
+        return sign_template.go_to_custom_template()
+
+
+
+
+
