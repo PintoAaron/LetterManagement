@@ -132,6 +132,7 @@
                 <field name="is_closed" invisible="1" />
                 <field name="sign_template_id" invisible="1" />
                 <field name="is_sign" invisible="1" />
+                <field name="is_fully_signed" invisible="1" />
                 <header>
                     <widget
                         name="attach_document"

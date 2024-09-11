@@ -3,6 +3,12 @@ from datetime import datetime
 import base64
 from odoo import api, fields, models, tools
 from odoo.tools import is_html_empty
+from odoo.exceptions import UserError
+
+import subprocess
+import base64
+import os
+import tempfile
 
 
 class Letter(models.Model):
@@ -123,6 +129,7 @@ class Letter(models.Model):
     is_sign = fields.Boolean(compute="_compute_is_sign")
     sign_request_id = fields.Many2one('sign.request', string="Signature Request", readonly=True)
     sign_template_id = fields.Many2one('sign.template', string="Signature Template", readonly=True)
+    is_fully_signed = fields.Boolean(compute='_compute_is_fully_signed')
 
     @api.depends("subject")
     def _compute_render_model(self):
@@ -281,7 +288,7 @@ class Letter(models.Model):
 
     def action_download_pdf(self):
         self.ensure_one()
-        attachment = self.render_pdf()
+        attachment = self._get_fully_signed_letter_pdf()
         return {
             'type': 'ir.actions.act_url',
             'url': f'/web/content/{attachment.id}?download=true',
@@ -290,7 +297,7 @@ class Letter(models.Model):
 
     def action_open_signature_kanban(self):
         # Redirect the user to the kanban view of the signature templates
-        
+
         return {
             'type': 'ir.actions.act_window',
             'name': 'Signature Templates',
@@ -361,7 +368,6 @@ class Letter(models.Model):
 
     def action_open_letter_requests(self):
         self.ensure_one()
-        
         return {
             "type": "ir.actions.act_window",
             "name": "Sign Requests",
@@ -371,4 +377,39 @@ class Letter(models.Model):
             "views": [[False, 'kanban'], [False, "form"]]
         }
 
+    def _get_fully_signed_letter_pdf(self):
+        sign_request = self.env['sign.request'].search(
+            [('state', '=', 'signed'), ('template_id', '=', self.sign_template_id.id)],
+            limit=1
+        )
+        if not sign_request:
+            raise UserError(('No fully signed document is available for this letter.'))
 
+        if not sign_request.completed_document_attachment_ids:
+            sign_request._generate_completed_document()
+        attachment = sign_request.completed_document_attachment_ids[1]
+        pdf_content = attachment.datas
+        existing_attachment = self.env['ir.attachment'].search([
+            ('res_model', '=', self._name),
+            ('res_id', '=', self.id),
+            ('name', 'like', f'{self.name}.pdf')
+        ])
+        if existing_attachment:
+            existing_attachment.unlink()
+        new_attachment = self.env['ir.attachment'].create({
+            'name': f'{self.name}.pdf',
+            'type': 'binary',
+            'datas': pdf_content,
+            'res_model': self._name,
+            'res_id': self.id,
+            'mimetype': 'application/pdf',
+        })
+        return new_attachment
+
+    def _compute_is_fully_signed(self):
+        for record in self:
+            sign_request = self.env['sign.request'].search(
+                [('state', '=', 'signed'), ('template_id', '=', record.sign_template_id.id)],
+                limit=1
+            )
+            record.is_fully_signed = True if sign_request else False
