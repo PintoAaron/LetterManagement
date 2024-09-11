@@ -383,7 +383,7 @@ class Letter(models.Model):
             limit=1
         )
         if not sign_request:
-            raise UserError(('No fully signed document is available for this letter.'))
+            raise UserError(_("This letter has not been signed yet."))
 
         if not sign_request.completed_document_attachment_ids:
             sign_request._generate_completed_document()
@@ -413,3 +413,25 @@ class Letter(models.Model):
                 limit=1
             )
             record.is_fully_signed = True if sign_request else False
+            
+    
+    def action_send_as_attachment(self):
+        self.ensure_one()
+        
+        attachment = self._get_fully_signed_letter_pdf()
+
+        subject = f"Letter:  {self.name} - {self.subject}".upper()
+
+        return {
+            'name': 'Send Letter as Attachment',
+            'type': 'ir.actions.act_window',
+            'res_model': 'letter.mail.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_subject': subject,
+                'default_email_to': self.partner_ids[0].email,
+                'default_body': f"Please find attached the letter: {self.name}",
+                'default_attachment_id': attachment.id,
+            },
+        }

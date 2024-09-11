@@ -179,6 +179,12 @@
                             class="btn-primary"
                             invisible="not is_sign or sign_template_id"
                             />
+                    <button
+                            name="action_send_as_attachment"
+                            type="object" string="Send by Email"
+                            class="btn-primary"
+                            invisible="not is_closed"
+                            />
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">

@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+        <record id="view_letter_mail_wizard_form" model="ir.ui.view">
+            <field name="name">letter.mail.wizard.form</field>
+            <field name="model">letter.mail.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="email_to"/>
+                        <field name="subject"/>
+                        <field name="body"/>
+                        <field name="attachment_id" options="{'no_create': True, 'no_open': True}"/>
+                    </group>
+                    <footer>
+                        <button string="Send" type="object" name="send_email" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+</odoo>
