@@ -153,13 +153,6 @@
                         invisible="not letter_type_id"
                         options="{'clickable': '1', 'fold_field': 'fold'}"
                     />
-<!--                    <button-->
-<!--                        name="action_preview_letter"-->
-<!--                        type="object"-->
-<!--                        string="Preview"-->
-<!--                        class="oe_highlight"-->
-<!--                        invisible="not id"-->
-<!--                    />-->
                     <button
                         name="action_download_pdf"
                         type="object"
@@ -183,7 +176,7 @@
                             name="action_send_as_attachment"
                             type="object" string="Send by Email"
                             class="btn-primary"
-                            invisible="not is_closed"
+                            invisible="not is_closed or not is_fully_signed"
                             />
                 </header>
                 <sheet>
