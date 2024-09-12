@@ -8,6 +8,7 @@ class LetterMailWizard(models.TransientModel):
     subject = fields.Char(string='Subject', required=True)
     body = fields.Text(string='Body', required=True)
     attachment_id = fields.Many2one('ir.attachment', string='Attachment', readonly=True)
+    letter_id = fields.Many2one('letter.letter', string='Letter', required=True)
 
     def send_email(self):
         self.ensure_one()
@@ -19,4 +20,5 @@ class LetterMailWizard(models.TransientModel):
         }
         mail = self.env['mail.mail'].create(mail_values)
         mail.send()
+        self.letter_id.is_delivered = True
         return {'type': 'ir.actions.act_window_close'}

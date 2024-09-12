@@ -135,6 +135,7 @@ class Letter(models.Model):
     sign_template_id = fields.Many2one(
         'sign.template', string="Signature Template", readonly=True)
     is_fully_signed = fields.Boolean(default=False)
+    is_delivered = fields.Boolean(default=False)
 
     @api.depends("subject")
     def _compute_render_model(self):
@@ -355,13 +356,50 @@ class Letter(models.Model):
             "views": [[False, 'kanban'], [False, "form"]]
         }
 
+    def _get_fully_signed_letter_pdf(self):
+        sign_request = self.env['sign.request'].search(
+            [('state', '=', 'signed'), ('template_id', '=', self.sign_template_id.id)],
+            limit=1
+        )
+        if not sign_request:
+            raise UserError(("This letter has not been signed yet."))
+
+        if not sign_request.completed_document_attachment_ids:
+            sign_request._generate_completed_document()
+        attachment = sign_request.completed_document_attachment_ids[1]
+        pdf_content = attachment.datas
+        existing_attachment = self.env['ir.attachment'].search([
+            ('res_model', '=', self._name),
+            ('res_id', '=', self.id),
+            ('name', 'like', f'{self.name}.pdf')
+        ])
+        if existing_attachment:
+            existing_attachment.unlink()
+        new_attachment = self.env['ir.attachment'].create({
+            'name': f'{self.name}.pdf',
+            'type': 'binary',
+            'datas': pdf_content,
+            'res_model': self._name,
+            'res_id': self.id,
+            'mimetype': 'application/pdf',
+        })
+        return new_attachment
+
+    def _compute_is_fully_signed(self):
+        for record in self:
+            sign_request = self.env['sign.request'].search(
+                [('state', '=', 'signed'), ('template_id', '=', record.sign_template_id.id)],
+                limit=1
+            )
+            record.is_fully_signed = True if sign_request else False
+            
+    
     def action_send_as_attachment(self):
         self.ensure_one()
-
         attachment = self._get_fully_signed_letter_pdf()
 
         subject = f"Letter:  {self.name} - {self.subject}".upper()
-
+        # if letter successfully signed, set is_delivered to True
         return {
             'name': 'Send Letter as Attachment',
             'type': 'ir.actions.act_window',
@@ -373,5 +411,7 @@ class Letter(models.Model):
                 'default_email_to': self.partner_ids[0].email,
                 'default_body': f"Please find attached the letter: {self.name}",
                 'default_attachment_id': attachment.id,
+                'default_letter_id': self.id,
             },
         }
+

@@ -273,6 +273,11 @@
                     name="inactive"
                     domain="[('active', '=', False)]"
                 />
+                <filter
+                    string="Is Delivered"
+                    name="is_delivered"
+                    domain="[('is_delivered', '=', True)]"
+                />
                 <group expand="1" string="Group By">
                     <filter
                         name="groupby_company"
