@@ -128,19 +128,30 @@ class Letter(models.Model):
     attachment_number = fields.Integer(
         "Number of Attachments", compute="_compute_attachment_number"
     )
+    signature_status = fields.Char(compute = "_compute_signature_status")
     is_closed = fields.Boolean(compute="_compute_is_closed")
     is_sign = fields.Boolean(compute="_compute_is_sign")
     sign_request_id = fields.Many2one(
         'sign.request', string="Signature Request", readonly=True)
     sign_template_id = fields.Many2one(
         'sign.template', string="Signature Template", readonly=True)
-    is_fully_signed = fields.Boolean(default=False)
+    is_fully_signed = fields.Boolean(compute="_compute_is_fully_signed")
     is_delivered = fields.Boolean(default=False)
+    
 
     @api.depends("subject")
     def _compute_render_model(self):
         # Because of mail.composer.mixin
         self.render_model = "letter.letter"
+    
+    def _compute_signature_status(self):
+        for record in self:
+            sign_request = self.env['sign.request'].search(
+                [('template_id', '=', record.sign_template_id.id)],
+                limit=1
+            )
+            record.signature_status = sign_request.state if sign_request else ''
+    
 
     @api.depends("template_id")
     def _compute_subject(self):
@@ -203,13 +214,13 @@ class Letter(models.Model):
             value["name"] = self._create_unique_reference(date)
         return super().create(values_list)
     
-    @api.onchange("stage_id")
-    def _onchange_set_is_fully_signed(self):
-        sign_request = self.env['sign.request'].search(
-            [('state', '=', 'signed'), ('template_id', '=', self.sign_template_id.id)],
-            limit=1
-        )
-        self.is_fully_signed = True if sign_request else False
+    def _compute_is_fully_signed(self):
+        for record in self:
+            sign_request = self.env['sign.request'].search(
+                [('state', '=', 'signed'), ('template_id', '=', record.sign_template_id.id)],
+                limit=1
+            )
+            record.is_fully_signed = True if sign_request else False
 
     @api.onchange("partner_ids")
     def _onchange_partner_ids(self):
@@ -385,21 +396,12 @@ class Letter(models.Model):
         })
         return new_attachment
 
-    def _compute_is_fully_signed(self):
-        for record in self:
-            sign_request = self.env['sign.request'].search(
-                [('state', '=', 'signed'), ('template_id', '=', record.sign_template_id.id)],
-                limit=1
-            )
-            record.is_fully_signed = True if sign_request else False
-            
     
     def action_send_as_attachment(self):
         self.ensure_one()
         attachment = self._get_fully_signed_letter_pdf()
 
         subject = f"Letter:  {self.name} - {self.subject}".upper()
-        # if letter successfully signed, set is_delivered to True
         return {
             'name': 'Send Letter as Attachment',
             'type': 'ir.actions.act_window',

@@ -28,4 +28,33 @@
             margin-right: 3.125em;
         }
 
+.signature-status-bar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 130%;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+    transform: translate(-50%, -50%) rotate(45deg);
+    transform-origin: center;
+    border-radius: 8px; 
+}
 
+
+.image-container {
+    position: relative;
+    display: inline-block;
+}
+.status-approved {
+    background-color: green;
+}
+
+.status-refused {
+    background-color: #ff634f;
+}
+
+.status-expired {
+    background-color: #808080;
+}
