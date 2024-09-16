@@ -132,7 +132,6 @@
                 <field name="is_closed" invisible="1" />
                 <field name="sign_template_id" invisible="1" />
                 <field name="is_sign" invisible="1" />
-                <field name="is_fully_signed" invisible="1" />
                 <field name="signature_status" invisible="1" />
 
                 <header>
@@ -178,7 +177,7 @@
                             name="action_send_as_attachment"
                             type="object" string="Send by Email"
                             class="btn-primary"
-                            invisible="not is_closed or not is_fully_signed"
+                            invisible="not is_closed or signature_status != 'signed'"
                             />
                 </header>
                 <sheet>

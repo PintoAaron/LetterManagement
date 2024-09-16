@@ -9,7 +9,6 @@ from odoo.exceptions import UserError
 from datetime import datetime
 
 
-
 class Letter(models.Model):
     _name = "letter.letter"
     _inherit = [
@@ -85,6 +84,7 @@ class Letter(models.Model):
     user_id = fields.Many2one(
         string="Author",
         default=lambda self: self.env.user,
+        readonly=True,
     )
     partner_ids = fields.Many2many(
         comodel_name="res.partner",
@@ -128,22 +128,20 @@ class Letter(models.Model):
     attachment_number = fields.Integer(
         "Number of Attachments", compute="_compute_attachment_number"
     )
-    signature_status = fields.Char(compute = "_compute_signature_status")
-    is_closed = fields.Boolean(compute="_compute_is_closed")
-    is_sign = fields.Boolean(compute="_compute_is_sign")
+    signature_status = fields.Char(compute="_compute_signature_status")
     sign_request_id = fields.Many2one(
         'sign.request', string="Signature Request", readonly=True)
     sign_template_id = fields.Many2one(
         'sign.template', string="Signature Template", readonly=True)
-    is_fully_signed = fields.Boolean(compute="_compute_is_fully_signed")
+    is_closed = fields.Boolean(compute="_compute_is_closed")
+    is_sign = fields.Boolean(compute="_compute_is_sign")
     is_delivered = fields.Boolean(default=False)
-    
 
     @api.depends("subject")
     def _compute_render_model(self):
         # Because of mail.composer.mixin
         self.render_model = "letter.letter"
-    
+
     def _compute_signature_status(self):
         for record in self:
             sign_request = self.env['sign.request'].search(
@@ -151,7 +149,6 @@ class Letter(models.Model):
                 limit=1
             )
             record.signature_status = sign_request.state if sign_request else ''
-    
 
     @api.depends("template_id")
     def _compute_subject(self):
@@ -213,14 +210,6 @@ class Letter(models.Model):
             date = value.get('date', None)
             value["name"] = self._create_unique_reference(date)
         return super().create(values_list)
-    
-    def _compute_is_fully_signed(self):
-        for record in self:
-            sign_request = self.env['sign.request'].search(
-                [('state', '=', 'signed'), ('template_id', '=', record.sign_template_id.id)],
-                limit=1
-            )
-            record.is_fully_signed = True if sign_request else False
 
     @api.onchange("partner_ids")
     def _onchange_partner_ids(self):
@@ -270,7 +259,6 @@ class Letter(models.Model):
                 {template_fname},
             )[rendering_res_ids[0]][template_fname]
         return self[composer_fname]
-
 
     def _get_fully_signed_letter_pdf(self):
         sign_request = self.env['sign.request'].search(
@@ -367,36 +355,6 @@ class Letter(models.Model):
             "views": [[False, 'kanban'], [False, "form"]]
         }
 
-    def _get_fully_signed_letter_pdf(self):
-        sign_request = self.env['sign.request'].search(
-            [('state', '=', 'signed'), ('template_id', '=', self.sign_template_id.id)],
-            limit=1
-        )
-        if not sign_request:
-            raise UserError(("This letter has not been signed yet."))
-
-        if not sign_request.completed_document_attachment_ids:
-            sign_request._generate_completed_document()
-        attachment = sign_request.completed_document_attachment_ids[1]
-        pdf_content = attachment.datas
-        existing_attachment = self.env['ir.attachment'].search([
-            ('res_model', '=', self._name),
-            ('res_id', '=', self.id),
-            ('name', 'like', f'{self.name}.pdf')
-        ])
-        if existing_attachment:
-            existing_attachment.unlink()
-        new_attachment = self.env['ir.attachment'].create({
-            'name': f'{self.name}.pdf',
-            'type': 'binary',
-            'datas': pdf_content,
-            'res_model': self._name,
-            'res_id': self.id,
-            'mimetype': 'application/pdf',
-        })
-        return new_attachment
-
-    
     def action_send_as_attachment(self):
         self.ensure_one()
         attachment = self._get_fully_signed_letter_pdf()
@@ -410,10 +368,9 @@ class Letter(models.Model):
             'target': 'new',
             'context': {
                 'default_subject': subject,
-                'default_email_to': self.partner_ids[0].email,
-                'default_body': f"Please find attached the letter: {self.name}",
+                'default_email_to': self.partner_ids[0].email or "receipient@gmail.com",
+                'default_body': f"Please find attached the letter:  {self.name}",
                 'default_attachment_id': attachment.id,
                 'default_letter_id': self.id,
             },
         }
-
