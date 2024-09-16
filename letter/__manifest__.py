@@ -23,7 +23,7 @@
         "views/letter_type.xml",
         "views/letter_letter.xml",
         "views/letter_dashboard.xml",
-        "views/letter_mail_wizard.xml",
+        "wizard/letter_mail_wizard.xml",
     ],
     "assets": {
         "web.assets_backend": [
