@@ -85,16 +85,6 @@
         </field>
     </record>
 
-    <odoo>
-    <record id="action_signature_kanban_view" model="ir.actions.act_window">
-        <field name="name">Signature Templates</field>
-        <field name="res_model">sign.template</field>
-        <field name="view_mode">kanban</field>
-        <field name="view_id" ref="sign.sign_template_view_kanban"/>
-        <field name="target">current</field>
-        <field name="domain">[('letter_ids', '!=', False)]</field>
-    </record>
-</odoo>
 
 
 
@@ -118,7 +108,7 @@
                 <field name="stage_id" options="{'no_open': True}" />
                 <field name="active" column_invisible="1" />
                 <field name="is_closed" column_invisible="1" />
-                <field name="is_sign" column_invisible="1"/>
+<!--                <field name="is_sign" column_invisible="1"/>-->
             </tree>
         </field>
     </record>
@@ -130,9 +120,9 @@
             <form>
                 <field name="active" invisible="1" />
                 <field name="is_closed" invisible="1" />
-                <field name="sign_template_id" invisible="1" />
-                <field name="is_sign" invisible="1" />
-                <field name="signature_status" invisible="1" />
+<!--                <field name="sign_template_id" invisible="1" />-->
+<!--                <field name="is_sign" invisible="1" />-->
+<!--                <field name="signature_status" invisible="1" />-->
 
                 <header>
                     <widget
@@ -154,31 +144,31 @@
                         invisible="not letter_type_id"
                         options="{'clickable': '1', 'fold_field': 'fold'}"
                     />
-                    <button
-                        name="action_download_pdf"
-                        type="object"
-                        string="Download"
-                        class="oe_highlight"
-                        invisible="not is_closed"
-                    />
-                    <button
-                            name="action_open_letter_requests"
-                            type="object" string="View Sign Templates"
-                            class="btn-primary"
-                            invisible="not is_sign or not sign_template_id"
-                            />
-                    <button
-                            name="action_create_sign_template"
-                            type="object" string="Sign Letter"
-                            class="btn-primary"
-                            invisible="not is_sign or sign_template_id"
-                            />
-                    <button
-                            name="action_send_as_attachment"
-                            type="object" string="Send by Email"
-                            class="btn-primary"
-                            invisible="not is_closed or signature_status != 'signed'"
-                            />
+<!--                    <button-->
+<!--                        name="action_download_pdf"-->
+<!--                        type="object"-->
+<!--                        string="Download"-->
+<!--                        class="oe_highlight"-->
+<!--                        invisible="not is_closed"-->
+<!--                    />-->
+<!--                    <button-->
+<!--                            name="action_open_letter_requests"-->
+<!--                            type="object" string="View Sign Templates"-->
+<!--                            class="btn-primary"-->
+<!--                            invisible="not is_sign or not sign_template_id"-->
+<!--                            />-->
+<!--                    <button-->
+<!--                            name="action_create_sign_template"-->
+<!--                            type="object" string="Sign Letter"-->
+<!--                            class="btn-primary"-->
+<!--                            invisible="not is_sign or sign_template_id"-->
+<!--                            />-->
+<!--                    <button-->
+<!--                            name="action_send_as_attachment"-->
+<!--                            type="object" string="Send by Email"-->
+<!--                            class="btn-primary"-->
+<!--                            invisible="not is_closed or signature_status != 'signed'"-->
+<!--                            />-->
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
@@ -211,20 +201,20 @@
                             options="{'preview_image': 'letter_type_image', 'size': [80, 80]}"
                             class="bg-view"
                         />
-                        <div class="signature-status-bar status-approved" 
-                            invisible="signature_status != 'signed'">
-                            Approved
-                        </div>
+<!--                        <div class="signature-status-bar status-approved" -->
+<!--                            invisible="signature_status != 'signed'">-->
+<!--                            Approved-->
+<!--                        </div>-->
                             
-                        <div class="signature-status-bar status-refused"
-                            invisible="signature_status != 'refused'">
-                            Refused
-                        </div>
+<!--                        <div class="signature-status-bar status-refused"-->
+<!--                            invisible="signature_status != 'refused'">-->
+<!--                            Refused-->
+<!--                        </div>-->
 
-                        <div class="signature-status-bar status-expired"
-                            invisible="signature_status != 'expired'">
-                            Expired
-                        </div>
+<!--                        <div class="signature-status-bar status-expired"-->
+<!--                            invisible="signature_status != 'expired'">-->
+<!--                            Expired-->
+<!--                        </div>-->
                     </div>
                     <div class="oe_title">
                         <h4>

@@ -66,11 +66,11 @@
         parent="letters_menu"
         sequence="10"
     />
-     <menuitem id="menu_signature_template"
-              name="Signed Letters"
-              parent="letters_menu"
-              action="action_signature_kanban_view"
-              sequence="10"/>
+<!--     <menuitem id="menu_signature_template"-->
+<!--              name="Signed Letters"-->
+<!--              parent="letters_menu"-->
+<!--              action="action_signature_kanban_view"-->
+<!--              sequence="10"/>-->
 
 
 

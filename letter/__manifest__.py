@@ -11,7 +11,6 @@
         "mail",
         "pipeline",
         "email_template_qweb",
-        "sign",
     ],
     "data": [
         "security/ir.model.access.csv",

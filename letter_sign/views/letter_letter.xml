@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ <odoo>
+    <record id="action_sign_template_kanban_view" model="ir.actions.act_window">
+        <field name="name">Signature Templates</field>
+        <field name="res_model">sign.template</field>
+        <field name="view_mode">kanban</field>
+        <field name="view_id" ref="sign.sign_template_view_kanban"/>
+        <field name="target">current</field>
+        <field name="domain">[('letter_ids', '!=', False)]</field>
+    </record>
+
+    <record id="action_signature_kanban_view" model="ir.actions.act_window">
+        <field name="name">Signed Letters</field>
+        <field name="res_model">letter.letter</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('is_sign', '=', True), ('signature_status', '=', 'signed')]</field>
+        <field name="context">{}</field>
+    </record>
+
+
+
+
+
+
+
+
+
+
+    <record id="letter_sign_form_view" model="ir.ui.view">
+        <field name="name">letter.letter.form.sign</field>
+        <field name="model">letter.letter</field>
+        <field name="inherit_id" ref="letter.letter_form"/>
+
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <field name="sign_template_id" invisible="1"/>
+                <field name="is_sign" invisible="1"/>
+                <field name="signature_status" invisible="1"/>
+            </xpath>
+
+            <xpath expr="//header" position="inside">
+                <button
+                    name="action_download_pdf"
+                    type="object"
+                    string="Download"
+                    class="oe_highlight"
+                    invisible="not is_closed"
+                />
+                <button
+                    name="action_open_letter_requests"
+                    type="object" string="View Sign Templates"
+                    class="btn-primary"
+                    invisible="not is_sign or not sign_template_id"
+                />
+                <button
+                    name="action_create_sign_template"
+                    type="object" string="Sign Letter"
+                    class="btn-primary"
+                    invisible="not is_sign or sign_template_id"
+                />
+                <button
+                    name="action_send_as_attachment"
+                    type="object" string="Send by Email"
+                    class="btn-primary"
+                    invisible="not is_closed or signature_status != 'signed'"
+                />
+            </xpath>
+
+            <xpath expr="//div[@class='oe_avatar image-container']" position="inside">
+                <div class="signature-status-bar status-approved"
+                     invisible="signature_status != 'signed'">
+                    Approved
+                </div>
+                <div class="signature-status-bar status-refused"
+                     invisible="signature_status != 'refused'">
+                    Refused
+                </div>
+                <div class="signature-status-bar status-expired"
+                     invisible="signature_status != 'expired'">
+                    Expired
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>
