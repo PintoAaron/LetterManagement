@@ -1,20 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-    <menuitem
-        id="root_menu"
-        name="Letter Sign"
-    >
-    </menuitem>
-
-
-
-
-<!--    <record id="menu_signature_template" model="ir.ui.menu">-->
-<!--        <field name="name">Signed Letters</field>-->
-<!--        <field name="parent_id" ref="letters_menu"/>-->
-<!--        <field name="action" ref="letter_sign.action_signature_kanban_view"/>-->
-<!--        <field name="sequence">10</field>-->
-<!--    </record>-->
+  <menuitem id="menu_signature_template"
+              name="Signed Letters"
+              parent="letter.letters_menu"
+              action="action_sign_template_kanban_view"
+              sequence="10" />
 </odoo>
 
 

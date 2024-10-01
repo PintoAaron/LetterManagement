@@ -135,7 +135,7 @@ class Letter(models.Model):
     #     'sign.template', string="Signature Template", readonly=True)
     is_closed = fields.Boolean(compute="_compute_is_closed")
     # is_sign = fields.Boolean(compute="_compute_is_sign")
-    # is_delivered = fields.Boolean(default=False)
+    is_delivered = fields.Boolean(default=False)
 
     @api.depends("subject")
     def _compute_render_model(self):

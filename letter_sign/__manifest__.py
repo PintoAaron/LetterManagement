@@ -14,6 +14,7 @@
     "data": [
         "security/ir.model.access.csv",
         "views/letter_letter.xml",
+        "views/letter_menus.xml",
     ],
     "application": True,
     "installable": True,

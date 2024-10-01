@@ -26,6 +26,9 @@
 
 
 
+
+
+
     <record id="letter_sign_form_view" model="ir.ui.view">
         <field name="name">letter.letter.form.sign</field>
         <field name="model">letter.letter</field>
