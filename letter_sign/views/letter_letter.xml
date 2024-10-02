@@ -38,6 +38,7 @@
             <xpath expr="//form" position="inside">
                 <field name="sign_template_id" invisible="1"/>
                 <field name="is_sign" invisible="1"/>
+                <field name="sign_request_id" invisible="1"/>
                 <field name="signature_status" invisible="1"/>
             </xpath>
 
@@ -51,15 +52,15 @@
                 />
                 <button
                     name="action_open_letter_requests"
-                    type="object" string="View Sign Templates"
+                    type="object" string="View Sign Request"
                     class="btn-primary"
-                    invisible="not is_sign or not sign_template_id"
+                    invisible="not is_sign"
                 />
                 <button
                     name="action_create_sign_template"
                     type="object" string="Sign Letter"
                     class="btn-primary"
-                    invisible="not is_sign or sign_template_id"
+                    invisible="not is_sign"
                 />
                 <button
                     name="action_send_as_attachment"
