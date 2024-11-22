@@ -136,6 +136,12 @@ class Letter(models.Model):
     is_closed = fields.Boolean(compute="_compute_is_closed")
     # is_sign = fields.Boolean(compute="_compute_is_sign")
     is_delivered = fields.Boolean(default=False)
+    is_reviewed = fields.Boolean(compute="_compute_is_review_allowed")
+
+    @api.depends("stage_id")
+    def _compute_is_review_allowed(self):
+        for record in self:
+            record.is_reviewed = record.user_id != self.env.user and record.stage_id.name == "Review"
 
     @api.depends("subject")
     def _compute_render_model(self):
@@ -324,8 +330,6 @@ class Letter(models.Model):
     #         "domain": [('letter_ids', '!=', False)],
     #
     #     }
-
-
 
     # def action_open_letter_requests(self):
     #     self.ensure_one()

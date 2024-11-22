@@ -120,6 +120,7 @@
             <form>
                 <field name="active" invisible="1" />
                 <field name="is_closed" invisible="1" />
+                <field name="is_reviewed" invisible="1" />
 <!--                <field name="sign_template_id" invisible="1" />-->
 <!--                <field name="is_sign" invisible="1" />-->
 <!--                <field name="signature_status" invisible="1" />-->
@@ -129,19 +130,19 @@
                         name="attach_document"
                         string="Attach Document"
                         action="message_post"
-                        invisible="attachment_number &lt; 1"
+                        invisible="attachment_number &lt; 1 or is_reviewed"
                     />
                     <widget
                         name="attach_document"
                         string="Attach Document"
                         action="message_post"
                         highlight="1"
-                        invisible="attachment_number &gt;= 1"
+                        invisible="attachment_number &gt;= 1 or is_reviewed"
                     />
                     <field
                         name="stage_id"
                         widget="statusbar_duration"
-                        invisible="not letter_type_id"
+                        invisible="not letter_type_id or is_reviewed"
                         options="{'clickable': '1', 'fold_field': 'fold'}"
                     />
 <!--                    <button-->
@@ -177,7 +178,7 @@
                             class="oe_stat_button"
                             icon="fa-book"
                             type="object"
-                            invisible="attachment_number == 0"
+                            invisible="attachment_number == 0 or is_reviewed"
                         >
                             <field
                                 name="attachment_number"
@@ -221,7 +222,7 @@
                             <field invisible="name == '/'" name="name" readonly="id" />
                         </h4>
                         <h1>
-                            <field name="subject" class="mb-5" required="1" readonly="is_closed"/>
+                            <field name="subject" class="mb-5" required="1" readonly="is_closed or is_reviewed"/>
                         </h1>
                     </div>
                     <group>
@@ -231,13 +232,15 @@
                                 options="{'no_create': True, 'no_open': True}"
                                 domain="[('share', '=', False)]"
                                 widget="many2one_avatar_user"
+                                readonly="1"
                             />
                             <field name="letter_type_id" invisible="1" />
-                            <field name="date" />
+                            <field name="date" readonly="is_reviewed or is_closed"/>
                             <field
                                 name="partner_ids"
                                 options="{'no_create': False}"
                                 widget="many2many_tags_avatar"
+                                readonly="is_reviewed or is_closed"
 
                             />
                             <field name="available_mail_template_ids" invisible="1" />
@@ -245,6 +248,7 @@
                                 name="template_id"
                                 options="{'no_create': True, 'no_open': True}"
                                 context="{'default_letter_id': active_id}"
+                                invisible="is_reviewed or is_closed"
                             />
                             <field name="company_id" invisible="1" />
                             <field name="render_model" invisible="1" />
@@ -252,15 +256,15 @@
                     </group>
                     <notebook>
                         <page name="content" string="Content">
-                            <field name="body" readonly="is_closed" />
+                            <field name="body" readonly="is_closed or is_reviewed" />
                         </page>
                     </notebook>
                 </sheet>
-                <div class="o_attachment_preview" />
+                <div class="o_attachment_preview"/>
                 <div class="oe_chatter">
-                    <field name="message_follower_ids" />
-                    <field name="activity_ids" />
-                    <field name="message_ids" />
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
                 </div>
             </form>
         </field>
@@ -299,4 +303,4 @@
             </search>
         </field>
     </record>
-</odoo>
+</odoo> 
