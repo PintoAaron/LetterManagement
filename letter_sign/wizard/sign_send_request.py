@@ -7,9 +7,9 @@ class SignSendRequest(models.TransientModel):
 
     letter_id = fields.One2many(
         comodel_name='letter.letter', related='template_id.letter_ids', string='Letter')
-    
-    
-    sign_role_names = {1: "First Signatory", 2: "Second Signatory", 3: "Third Signatory",}
+
+    sign_role_names = {1: "First Signatory",
+                       2: "Second Signatory", 3: "Third Signatory", }
 
     def sign_roles_and_signatories(self):
         template = self.template_id
@@ -29,7 +29,7 @@ class SignSendRequest(models.TransientModel):
             self.signer_ids = [(5, 0, 0)]
 
             signatory_names = [
-                self.sign_role_names.get(a,"Signatory") for a in range(1, len(signatories) + 1)]
+                self.sign_role_names.get(a, "Signatory") for a in range(1, len(signatories) + 1)]
             signer_ids = []
 
             for index, name in enumerate(signatory_names):
@@ -76,24 +76,32 @@ class SignSendRequest(models.TransientModel):
             sign_request.message_subscribe(partner_ids=cc_partner_ids)
             return sign_request
 
+    def _archive_letter_template(self):
+        self.template_id.active = False
+        return True
+
     def send_request(self):
         if self.letter_id:
-            request = self.sign_roles_and_signatories()
+            self.sign_roles_and_signatories()
             if self.activity_id:
                 self._activity_done()
                 return {'type': 'ir.actions.act_window_close'}
-            return request.go_to_document()
+            self._archive_letter_template()
+            return {
+                'type': 'ir.actions.act_window',
+                'res_model': 'letter.letter',
+                'view_mode': 'form',
+                'res_id': self.letter_id.id,
+                'target': 'main',
+            }
         return super().send_request()
-
 
 
 class SignSendRequestSigner(models.TransientModel):
     _inherit = "sign.send.request.signer"
-    
+
     def create(self, vals_list):
         for vals in vals_list:
             if not vals.get('partner_id'):
                 vals.update({'partner_id': 1})
         return super().create(vals_list)
-                
-                
