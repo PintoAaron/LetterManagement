@@ -130,14 +130,14 @@
                         name="attach_document"
                         string="Attach Document"
                         action="message_post"
-                        invisible="attachment_number &lt; 1 or is_reviewed"
+                        invisible="1"
                     />
                     <widget
                         name="attach_document"
                         string="Attach Document"
                         action="message_post"
                         highlight="1"
-                        invisible="attachment_number &gt;= 1 or is_reviewed"
+                        invisible="1"
                     />
                     <field
                         name="stage_id"
