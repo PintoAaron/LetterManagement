@@ -1,5 +1,4 @@
-import random
-from odoo import models, fields, api, Command
+from odoo import models, fields
 
 
 class LetterSignTemplate(models.Model):

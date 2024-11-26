@@ -17,18 +17,6 @@
         <field name="context">{}</field>
     </record>
 
-
-
-
-
-
-
-
-
-
-
-
-
     <record id="letter_sign_form_view" model="ir.ui.view">
         <field name="name">letter.letter.form.sign</field>
         <field name="model">letter.letter</field>
@@ -77,7 +65,7 @@
                 </div>
                 <div class="signature-status-bar status-refused"
                      invisible="signature_status != 'refused'">
-                    Refused
+                    Rejected
                 </div>
                 <div class="signature-status-bar status-expired"
                      invisible="signature_status != 'expired'">

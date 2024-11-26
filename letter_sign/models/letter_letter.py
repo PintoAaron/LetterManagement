@@ -1,7 +1,7 @@
-from odoo import models, fields, api, Command
-
-from odoo.exceptions import UserError
 import base64
+
+from odoo import models, fields
+from odoo.exceptions import UserError
 
 
 class LetterSign(models.Model):
@@ -43,7 +43,6 @@ class LetterSign(models.Model):
         sign_template = self.env['sign.template'].create({
             'name': f"{self.name} - {self.subject}",
             'attachment_id': attachment.id,
-            # 'letter_ids': [(4, self.id)],
         })
         self.sign_template_id = sign_template.id
         return sign_template.go_to_custom_template()

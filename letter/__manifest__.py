@@ -3,7 +3,7 @@
     "summary": "Manage letter",
     "author": "QG Apps",
     "website": "https://github.com/space-bicycle/odoo-lab",
-    "version": "17.0.1.0.2",
+    "version": "17.0.1.0.0",
     "license": "Other proprietary",
     "category": "Uncategorized",
     "depends": [
