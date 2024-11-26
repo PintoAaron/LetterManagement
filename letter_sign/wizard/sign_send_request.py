@@ -101,7 +101,11 @@ class SignSendRequestSigner(models.TransientModel):
     _inherit = "sign.send.request.signer"
 
     def create(self, vals_list):
-        for vals in vals_list:
-            if not vals.get('partner_id'):
-                vals.update({'partner_id': 1})
+        current_document = self.env['sign.send.request'].browse(
+            vals_list[0].get('sign_send_request_id')).letter_id
+
+        signer_ids = current_document.letter_type_id.partner_ids
+
+        if current_document:
+            vals_list[0].update({'partner_id': signer_ids[0].id})
         return super().create(vals_list)
