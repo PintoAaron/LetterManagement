@@ -15,7 +15,9 @@
         "security/ir.model.access.csv",
         "views/letter_letter.xml",
         "views/letter_menus.xml",
+        "wizard/sign_send_request_views.xml",
     ],
     "application": True,
     "installable": True,
 }
+ 
