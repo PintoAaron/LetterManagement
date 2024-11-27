@@ -13,7 +13,9 @@ class LetterSign(models.Model):
                 [('template_id', '=', record.sign_template_id.id)],
                 limit=1
             )
+            record.sign_request_id = sign_request.id
             record.signature_status = sign_request.state if sign_request else ''
+            
 
     def _compute_is_sign(self):
         for record in self:
@@ -26,6 +28,7 @@ class LetterSign(models.Model):
     is_sign = fields.Boolean(compute="_compute_is_sign")
     signature_status = fields.Char(compute="_compute_signature_status")
     is_delivered = fields.Boolean(default=False)
+    
 
     def action_create_sign_template(self):
         self.ensure_one()

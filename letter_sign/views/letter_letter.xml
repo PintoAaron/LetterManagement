@@ -48,7 +48,7 @@
                     name="action_create_sign_template"
                     type="object" string="Sign Letter"
                     class="btn-primary"
-                    invisible="not is_sign"
+                    invisible="not is_sign or sign_request_id"
                 />
                 <button
                     name="action_send_as_attachment"
