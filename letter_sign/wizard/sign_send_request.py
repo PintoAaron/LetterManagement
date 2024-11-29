@@ -87,23 +87,27 @@ class SignSendRequest(models.TransientModel):
                 self._activity_done()
                 return {'type': 'ir.actions.act_window_close'}
             self._archive_letter_template()
-            return {
-                'name': f"{self.letter_id.letter_type_id.name} - Letter(s)",
-                'type': 'ir.actions.act_window',
-                'tag': 'reload',
-                'res_model': 'letter.letter',
-                'view_mode': 'kanban',
-                'view_id': self.env.ref('letter.letter_kanban').id,
-                'target': 'main',
-                "domain": [('letter_type_id', '!=', False)],
-                'context': {
-                    'group_by': 'stage_id',
-                    'search_default_stage_id': self.letter_id.stage_id.id,
-                    'search_default_id': self.letter_id.id,
-                },
-
-            }
+            return self._letter_view_modes()
         return super().send_request()
+
+    def _letter_view_modes(self):
+        kanban_view_id = self.env.ref('letter.letter_kanban').id
+        form_view_id = self.env.ref('letter.letter_form').id
+        return {
+            'name': f"{self.letter_id.letter_type_id.name} - Letter(s)",
+            'type': 'ir.actions.act_window',
+            'res_model': 'letter.letter',
+            'view_mode': 'kanban,form',
+            'views': [(kanban_view_id, 'kanban'), (form_view_id, 'form')],
+            'target': 'main',
+            "domain": [('letter_type_id', '!=', False)],
+            'context': {
+                'group_by': 'stage_id',
+                'search_default_stage_id': self.letter_id.stage_id.id,
+                'search_default_id': self.letter_id.id,
+            },
+
+        }
 
 
 class SignSendRequestSigner(models.TransientModel):
