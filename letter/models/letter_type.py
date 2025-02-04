@@ -49,7 +49,7 @@ class LetterType(models.Model):
         column1="letter_type_id",
         column2="partner_id",
         string='Signatories')
-    
+
     mail_template_ids = fields.Many2many(
         comodel_name="mail.template",
         domain=[("model", "=", "letter.letter")],
@@ -65,7 +65,8 @@ class LetterType(models.Model):
         string="Pipeline",
     )
 
-    show_configure_pipeline = fields.Boolean(compute="_compute_show_configure_pipeline")
+    show_configure_pipeline = fields.Boolean(
+        compute="_compute_show_configure_pipeline")
     letter_count = fields.Integer(
         string="Number of letters I've authored",
         compute="_compute_letter_count",
@@ -90,6 +91,21 @@ class LetterType(models.Model):
                     for sequence, stage in DEFAULT_STAGES.items()
                 ]
         return super().create(vals_list)
+
+    def read(self, fields=None, load="_classic_read"):
+        company_id = self.env.company.id
+
+        records = super(LetterType, self).read(fields=fields, load=load)
+        try:
+            records = [
+                record for record in records if record['company_id'] == company_id
+            ]
+        except KeyError:
+            records = self.env['letter.type'].search(
+                [('company_id', '=', company_id)]
+            )
+            records = [{field: record[field] for field in fields} for record in records]
+        return records
 
     @api.depends("stage_ids")
     def _compute_show_configure_pipeline(self):
@@ -116,7 +132,8 @@ class LetterType(models.Model):
             letter_type.id: count for letter_type, count in letters_data
         }
         for record in self:
-            record.letter_to_review_count = letters_mapped_data.get(record.id, 0)
+            record.letter_to_review_count = letters_mapped_data.get(
+                record.id, 0)
 
     def action_create_letter(self):
         self.ensure_one()
@@ -176,7 +193,3 @@ class LetterType(models.Model):
         ctx.update({"default_letter_type_id": self.id})
         action["context"] = ctx
         return action
-
-
-
-

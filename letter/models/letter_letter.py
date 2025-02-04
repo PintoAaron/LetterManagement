@@ -18,6 +18,8 @@ class Letter(models.Model):
     ]
     _description = "Letter"
     _track_duration_field = "stage_id"
+    
+    _check_company_auto = True
 
     def _default_stage_id(self):
         letter_type_id = (
