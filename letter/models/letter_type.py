@@ -91,21 +91,24 @@ class LetterType(models.Model):
                     for sequence, stage in DEFAULT_STAGES.items()
                 ]
         return super().create(vals_list)
+    
 
     def read(self, fields=None, load="_classic_read"):
-        company_id = self.env.company.id
+        company_ids = self.env.companies.ids
 
         records = super(LetterType, self).read(fields=fields, load=load)
         try:
             records = [
-                record for record in records if record['company_id'] == company_id
+                record for record in records if record['company_id'] in company_ids
             ]
         except KeyError:
             records = self.env['letter.type'].search(
-                [('company_id', '=', company_id)]
+                [('company_id', 'in', company_ids)]
             )
-            records = [{field: record[field] for field in fields} for record in records]
+            records = [{field: record[field] for field in fields}
+                       for record in records]
         return records
+    
 
     @api.depends("stage_ids")
     def _compute_show_configure_pipeline(self):
