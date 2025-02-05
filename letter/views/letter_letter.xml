@@ -87,14 +87,13 @@
 
 
 
-
-
     <record id="letter_tree" model="ir.ui.view">
         <field name="name">letter.tree</field>
         <field name="model">letter.letter</field>
         <field name="arch" type="xml">
             <tree create="0">
                 <field name="sequence" widget="handle" />
+                <field name="company_id" optional="show" />
                 <field name="name" optional="show" />
                 <field name="subject" optional="show" />
                 <field name="user_id" widget="many2one_avatar_user" optional="show" />

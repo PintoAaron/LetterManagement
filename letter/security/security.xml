@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="letter_user_group" model="res.groups">
+            <field name="name">User</field>
+            <field name="category_id" ref="letter.letter_module_category" />
+        </record>
+
+        <record id="letter_manager_group" model="res.groups">
+            <field name="name">Manager</field>
+            <field name="category_id" ref="letter.letter_module_category" />
+            <field name="implied_ids" eval="[(4, ref('letter_user_group'))]" />
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+
+
+        <!-- Rule for letter_user_group: Can only edit their own letters -->
+        <record id="letter_user_own_letters_rule" model="ir.rule">
+            <field name="name">Letter: User can only edit own letters</field>
+            <field name="model_id" ref="model_letter_letter"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('letter.letter_user_group'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Rule for letter_manager_group: Can edit any letter -->
+        <record id="letter_manager_all_letters_rule" model="ir.rule">
+            <field name="name">Letter: Manager can edit any letter</field>
+            <field name="model_id" ref="model_letter_letter"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('letter.letter_manager_group'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+    </data>
+
+</odoo>

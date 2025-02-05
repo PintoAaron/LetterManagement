@@ -14,7 +14,7 @@
     ],
     "data": [
         "security/ir_module_category.xml",
-        "security/res_groups.xml",
+        "security/security.xml",
         "security/ir.model.access.csv",
         "data/ir_sequence.xml",
         "reports/ir_actions_report.xml",
