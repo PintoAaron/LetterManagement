@@ -52,6 +52,18 @@ class Letter(models.Model):
         store=False,
     )
 
+    def read(self, fields=None, load="_classic_read"):
+        if fields and 'company_id' not in fields:
+            fields.append('company_id')
+
+        records = super(Letter, self).read(fields=fields, load=load)
+        company_ids = self.env.companies.ids
+
+        records = [
+            record for record in records if record['company_id'] in company_ids
+        ]
+        return records
+
     @api.depends('letter_type_id')
     def _compute_available_mail_template_ids(self):
         for record in self:
