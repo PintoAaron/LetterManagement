@@ -13,9 +13,10 @@
         "email_template_qweb",
     ],
     "data": [
+        "security/ir_module_category.xml",
+        "security/security.xml",
         "security/ir.model.access.csv",
         "data/ir_sequence.xml",
-        "data/letter_type.xml",
         "reports/ir_actions_report.xml",
         "views/letter_menus.xml",
         "views/letter_type_stage.xml",

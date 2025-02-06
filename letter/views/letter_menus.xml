@@ -3,6 +3,7 @@
     <menuitem
         id="root_menu"
         name="Letters"
+        groups="letter.letter_user_group"
         web_icon="letter,static/description/icon.png"
     >
         <menuitem id="letters_menu" name="Letters" sequence="1" />

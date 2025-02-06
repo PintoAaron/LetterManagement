@@ -14,6 +14,8 @@ class Letter(models.Model):
     _description = "Letter"
     _track_duration_field = "stage_id"
 
+    _check_company_auto = True
+
     def _default_stage_id(self):
         letter_type_id = (
             self.env.context.get(
@@ -44,6 +46,18 @@ class Letter(models.Model):
         compute="_compute_available_mail_template_ids",
         store=False,
     )
+
+    def read(self, fields=None, load="_classic_read"):
+        if fields and 'company_id' not in fields:
+            fields.append('company_id')
+
+        records = super(Letter, self).read(fields=fields, load=load)
+        company_ids = self.env.companies.ids
+
+        records = [
+            record for record in records if record['company_id'] in company_ids
+        ]
+        return records
 
     @api.depends('letter_type_id')
     def _compute_available_mail_template_ids(self):
@@ -173,12 +187,12 @@ class Letter(models.Model):
         company = self.env.company
         date = datetime.strptime(
             date, "%Y-%m-%d").date() or fields.Date.today()
-        letter_count = self.env['letter.letter'].search_count(
+        letter_count = self.env['letter.letter'].sudo().search_count(
             [('company_id', '=', company.id)])
         company_initials = "".join([word[0] for word in company.name.split()])
         formatted_date = date.strftime("%d%b%Y").upper()
         return f"{company_initials}/{formatted_date}/{letter_count + 1:03d}"
-
+        
     def _set_default_template(self):
         if self.letter_type_id:
             self.template_id = self.letter_type_id.mail_template_id.id

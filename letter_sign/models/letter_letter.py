@@ -28,7 +28,7 @@ class LetterSign(models.Model):
     is_sign = fields.Boolean(compute="_compute_is_sign")
     signature_status = fields.Char(compute="_compute_signature_status")
     is_delivered = fields.Boolean(default=False)
-    
+    received_letter_url = fields.Char()
 
     def action_create_sign_template(self):
         self.ensure_one()
