@@ -8,9 +8,9 @@
             <xpath expr="//group" position="inside">
                 <field name="letter_id" invisible="1"/>
             </xpath>
-            <!-- <xpath expr="//group[@string='Signers']" position="attributes">
+             <xpath expr="//form/group/group[1]" position="attributes">
                 <attribute name="invisible">letter_id</attribute>
-            </xpath> -->
+            </xpath>
             <xpath expr="//page[@name='contacts_in_copy']" position="attributes">
                 <attribute name="invisible">letter_id</attribute>
             </xpath>
