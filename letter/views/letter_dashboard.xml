@@ -64,7 +64,7 @@
         id="letter_menu"
         name="Letters"
         parent="letters_menu"
-        sequence="10"
+        sequence="2"
     />
 
     <!-- Dashboad kanban -->

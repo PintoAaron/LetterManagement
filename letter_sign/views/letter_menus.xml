@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-  <menuitem id="menu_signature_template"
+  <!-- <menuitem id="menu_signature_template"
               name="Signed Letters"
               parent="letter.letters_menu"
               action="action_sign_template_kanban_view"
-              sequence="10" />
+              sequence="10" /> -->
 </odoo>
 
 

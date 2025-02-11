@@ -17,6 +17,7 @@
         "security/security.xml",
         "security/ir.model.access.csv",
         "data/ir_sequence.xml",
+        "data/ir_cron.xml",
         "reports/ir_actions_report.xml",
         "views/letter_menus.xml",
         "views/letter_type_stage.xml",
@@ -24,6 +25,7 @@
         "views/letter_letter.xml",
         "views/letter_dashboard.xml",
         "wizard/letter_mail_wizard.xml",
+        "views/letter_inbound.xml",
     ],
     "assets": {
         "web.assets_backend": [
