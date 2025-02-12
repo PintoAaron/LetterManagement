@@ -101,9 +101,11 @@
         <field name="name">letter.inbound.tree</field>
         <field name="model">letter.inbound</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree create="0">
+                <field name="company_id" optional="show"/> 
+                <field name="user_id" optional="hide" widget="many2one_avatar_user" />
                 <field name="name"/>
-                <field name="partner_id"/>
+                <field name="partner_id" widget="many2one_avatar_user" />
                 <field name="date"/>
                 <field name="status" widget="statusbar"/>
             </tree>
@@ -131,21 +133,20 @@
                 </header>
                 <sheet>
                     <group>
-                        <group>
-                            <field name="name" readonly="is_delivered"/>
-                        </group>
-                        <group>
-                            <field name="partner_id" readonly="is_delivered"/>
-                        </group>
-                        <group>
-                            <field name="date" readonly="is_delivered"/>
-                        </group>
-                        <group>
-                            <field name="description" readonly="is_delivered"/>
-                        </group>
-                        <group>
-                            <field name="attachment" widget="binary" readonly="is_delivered"/>
-                        </group>
+                        <field name="name" readonly="is_delivered"/>
+                        <field
+                            name="user_id"
+                            options="{'no_create': True}"
+                            widget="many2one_avatar_user" 
+                            readonly="1"/>
+                        <field 
+                            name="partner_id"
+                            options="{'no_create': True}"
+                            widget="many2one_avatar_user" 
+                            readonly="is_delivered"/>
+                        <field name="date" readonly="is_delivered"/>
+                        <field name="description" readonly="is_delivered"/>
+                        <field name="attachment" widget="binary" readonly="is_delivered"/>
                     </group>
                 </sheet>
             </form>
@@ -162,8 +163,7 @@
             <search>
                 <field name="name"/>
                 <field name="partner_id"/>
-                <field name="date"/>
-                <field name="status"/>
+                <field name="description"/>
                 <filter
                     string="Archived"
                     name="inactive"

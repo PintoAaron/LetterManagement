@@ -1,6 +1,5 @@
-import base64
 from random import randint
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class LetterInbound(models.Model):
@@ -18,6 +17,7 @@ class LetterInbound(models.Model):
     description = fields.Text()
     attachment = fields.Binary(string='Letter')
     user_id = fields.Many2one(
+        comodel_name="res.users",
         string="Sender",
         default=lambda self: self.env.user,
     )
@@ -41,6 +41,38 @@ class LetterInbound(models.Model):
         ])
     active = fields.Boolean(default=True)
     is_delivered = fields.Boolean(default=False)
+    attachment_id = fields.Many2one(
+        comodel_name='ir.attachment',
+        string='Attachment',
+        readonly=True,
+        compute='_compute_attachment_id')
+
+    @api.depends('attachment')
+    def _compute_attachment_id(self):
+        for record in self:
+            if record.attachment:
+                attachment = self.env['ir.attachment'].create({
+                    'name': f'{record.name}.pdf',
+                    'type': 'binary',
+                    'datas': record.attachment,
+                    'res_model': self._name,
+                    'res_id': record.id,
+                    'mimetype': 'application/pdf',
+                })
+                record.attachment_id = attachment.id
+                
+    
+    def read(self, fields=None, load="_classic_read"):
+        if fields and 'company_id' not in fields:
+            fields.append('company_id')
+
+        records = super(LetterInbound, self).read(fields=fields, load=load)
+        company_ids = self.env.companies.ids
+
+        records = [
+            record for record in records if record['company_id'] in company_ids
+        ]
+        return records
 
     def send_inbound_letter(self):
         try:
@@ -48,12 +80,7 @@ class LetterInbound(models.Model):
                 'subject': f"Inbound Letter: {self.name}",
                 'body_html': f"Dear {self.partner_id.name}, Kindly find the attached letter.",
                 'email_to': self.partner_id.email,
-                'attachment_ids': [(0, 0, {
-                    'name': self.name,
-                    'datas': base64.b64encode(self.attachment),
-                    'res_model': 'letter.inbound',
-                    'type': 'binary',
-                })],
+                'attachment_ids': [(6, 0, [self.attachment_id.id])],
             }
             mail = self.env['mail.mail'].create(mail_values)
             mail.send()
@@ -67,7 +94,7 @@ class LetterInbound(models.Model):
     def send_inbound_letter_cron(self):
         inbound_letters = self.search([])
         for record in inbound_letters:
-            if not record.is_delivered and record.date == fields.Date.today():
+            if not record.is_delivered and record.date <= fields.Date.today():
                 record.send_inbound_letter()
         return True
 
